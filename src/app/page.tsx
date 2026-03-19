@@ -52,14 +52,10 @@ export default function Dashboard() {
       if (res.ok) {
         const updatedTicket = await res.json()
 
-        // BUG 2 INTENCIONAL: Mutación de estado de React
-        // Se altera el arreglo original en lugar de crear uno nuevo.
-        // Esto causa que React no detecte el cambio y no vuelva a renderizar la UI inmediatamente.
-        const ticketIndex = tickets.findIndex((t) => t.id === updatedTicket.id)
-        if (ticketIndex !== -1) {
-          tickets[ticketIndex] = updatedTicket
-          setTickets(tickets) // React no verá esto como un cambio de estado válido
-        }
+        setTickets((prevTickets) =>
+          prevTickets.map((t) => (t.id === updatedTicket.id ? updatedTicket : t))
+        )
+
       }
     } catch (error) {
       console.error("Error resolving ticket:", error)
